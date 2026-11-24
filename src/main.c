@@ -7,10 +7,11 @@
 int main(void){
     uint8_t code[] = {
         OP_PUSH,
-        0x00,0x01,0x00,0x00,
-        OP_PUSH,
         0x00,0x00,0x00,0x00,
-        OP_ADD,
+        OP_PUSH,
+        0x00,0x00,0x01,0x00,
+        OP_SWAP,
+        OP_SUB,
         OP_PRINT,
         OP_HALT,
     };

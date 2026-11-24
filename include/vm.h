@@ -20,7 +20,7 @@ typedef struct{
     uint8_t *code;
     size_t code_size;
     size_t ip;
-    uint32_t stack[VM_STACK_SIZE];
+    int32_t stack[VM_STACK_SIZE];
     size_t sp;
     FILE *out;
 }VM;

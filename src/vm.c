@@ -17,8 +17,21 @@ static inline void push(VM *vm, uint32_t v){
     vm->stack[(vm->sp)++] = v;
 }
 
-static inline uint32_t pop(VM *vm){
+static inline int32_t pop(VM *vm){
     return vm->stack[--(vm->sp)];
+}
+
+static inline void dup(VM *vm){
+    assert(vm->sp >= 1);
+    push(vm, vm->stack[vm->sp-1]);
+}
+
+static inline void swap(VM *vm){
+    assert(vm->sp >= 2);
+    int32_t a = pop(vm);
+    int32_t b = pop(vm);
+    push(vm, a);
+    push(vm, b);
 }
 
 static inline uint32_t load_u32(VM *vm){
@@ -55,24 +68,68 @@ void vm_run(VM *vm){
                 push(vm, v);
                 break;
             }
+            case OP_POP:{
+                ++(vm->ip);
+                pop(vm);
+                break;
+            }
+            case OP_DUP:{
+                ++(vm->ip);
+                dup(vm);
+                break;
+            }
+            case OP_SWAP:{
+                ++(vm->ip);
+                swap(vm);
+                break;
+            }
             case OP_ADD:{
                 ++(vm->ip);
-                uint32_t a = pop(vm);
-                uint32_t b = pop(vm);
+                int32_t a = pop(vm);
+                int32_t b = pop(vm);
                 push(vm, b + a);
+                break;
+            }
+            case OP_SUB:{
+                ++(vm->ip);
+                int32_t a = pop(vm);
+                int32_t b = pop(vm);
+                push(vm, b - a);
                 break;
             }
             case OP_MUL:{
                 ++(vm->ip);
-                uint32_t a = pop(vm);
-                uint32_t b = pop(vm);
+                int32_t a = pop(vm);
+                int32_t b = pop(vm);
                 push(vm, b * a);
+                break;
+            }
+            case OP_DIV:{
+                ++(vm->ip);
+                int32_t a = pop(vm);
+                int32_t b = pop(vm);
+                if(a == 0) goto halt;
+                push(vm, b / a);
+                break;
+            }
+            case OP_MOD:{
+                ++(vm->ip);
+                int32_t a = pop(vm);
+                int32_t b = pop(vm);
+                if(a == 0) goto halt;
+                push(vm, b % a);
+                break;
+            }
+            case OP_NEG:{
+                ++(vm->ip);
+                int32_t a = pop(vm);
+                push(vm, -a);
                 break;
             }
             case OP_PRINT:{
                 ++(vm->ip);
-                uint32_t num = pop(vm);
-                fprintf(vm->out, "%u", num);
+                int32_t num = pop(vm);
+                fprintf(vm->out, "%d", num);
                 break;
             }
             case OP_HALT:{

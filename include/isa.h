@@ -13,8 +13,9 @@ extern "C" {
 #endif
 
 typedef enum{
-    OP_PUSH = 0x01,
-    OP_ADD = 0x10, OP_MUL = 0x12,
+    OP_PUSH = 0x01, OP_POP = 0x02, OP_DUP = 0x03, OP_SWAP = 0x04,
+    OP_ADD = 0x10, OP_SUB = 0x11, OP_MUL = 0x12, OP_DIV = 0x13,
+    OP_MOD = 0x14, OP_NEG = 0x15,
     OP_PRINT = 0xF0, OP_HALT = 0xFF,
 }OpCode;
 

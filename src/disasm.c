@@ -31,19 +31,43 @@ void disasm(uint8_t *code, size_t len, FILE *out){
             case OP_PUSH:{
                 uint32_t width = operand_width(OP_PUSH);
                 if(i + width >= len){
-                    print_err("there is not enough byte for PUSH", out);
+                    print_err("there is no enough byte for PUSH", out);
                     return;
                 }
                 print_op(i, OP_PUSH, code + i + 1, out);
                 i += width;
                 break;
             }
+            case OP_DUP:{
+                print_op(i, OP_DUP, NULL, out);
+                break;
+            }
+            case OP_SWAP:{
+                print_op(i, OP_SWAP, NULL, out);
+                break;
+            }
             case OP_ADD:{
                 print_op(i, OP_ADD, NULL, out);
                 break;
             }
+            case OP_SUB:{
+                print_op(i, OP_SUB, NULL, out);
+                break;
+            }
             case OP_MUL:{
                 print_op(i, OP_MUL, NULL, out);
+                break;
+            }
+            case OP_DIV:{
+                print_op(i, OP_DIV, NULL, out);
+                break;
+            }
+            case OP_MOD:{
+                print_op(i, OP_MOD, NULL, out);
+                break;
+            }
+            case OP_NEG:{
+                print_op(i, OP_NEG, NULL, out);
                 break;
             }
             case OP_PRINT:{
