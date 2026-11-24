@@ -9,6 +9,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,6 +20,7 @@ typedef struct{
     uint8_t *code;
 }Chunk;
 
+bool chunk_is_empty(Chunk *chunk);
 Chunk chunk_new(void);
 void chunk_free(Chunk *chunk);
 void emit_u8(Chunk *chunk, uint8_t v);

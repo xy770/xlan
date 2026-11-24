@@ -5,10 +5,19 @@
  */
 
 #include "chunk.h"
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
+bool chunk_is_empty(Chunk *chunk){
+    if(chunk == NULL) return true;
+
+    if(chunk->code == NULL) return true;
+
+    return false;
+}
 
 int chunk_reserve(Chunk *chunk, size_t size){
     if(chunk == NULL) return 1;
