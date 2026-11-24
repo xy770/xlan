@@ -8,15 +8,20 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
-void chunk_with(Chunk *chunk, size_t size){
-    if(chunk == NULL) return;
+int chunk_reserve(Chunk *chunk, size_t size){
+    if(chunk == NULL) return 1;
+
+    if(chunk->cap >= size + chunk->count) return 0;
+    size = (size + chunk->count + 1) * 2;
 
     uint8_t *tmp = realloc(chunk->code, size);
-    if(tmp == NULL) return;
+    if(tmp == NULL) return 1;
     chunk->code = tmp;
 
     chunk->cap = size;
+    return 0;
 }
 
 Chunk chunk_new(void){
@@ -34,7 +39,7 @@ Chunk chunk_new(void){
 void chunk_free(Chunk *chunk){
     if(chunk == NULL) return;
 
-    if(!chunk->code) free(chunk->code);
+    if(chunk->code) free(chunk->code);
     chunk->code = NULL;
 
     chunk->cap = 0;
@@ -42,33 +47,23 @@ void chunk_free(Chunk *chunk){
 }
 
 void emit_u8(Chunk *chunk, uint8_t v){
-    if(chunk->cap - 1 < chunk->count){
-        size_t size = (chunk->cap + 1) * 2;
-        chunk_with(chunk, size);
-        
-        if(chunk->cap - 1 < chunk->count) return;
-    }
+    if(chunk_reserve(chunk, 1)) return;
 
     chunk->code[(chunk->count)++] = v;
 }
 
 void emit_u16(Chunk *chunk, uint16_t v){
-    if(chunk->cap - 2 < chunk->count){
-        size_t size = (chunk->cap + 2) * 2;
-        chunk_with(chunk, size);
-        
-        if(chunk->cap - 2 < chunk->count) return;
-    }
+    if(chunk_reserve(chunk, 2)) return;
 
-    chunk->count += 2;
+    chunk->code[(chunk->count)++] = (uint8_t)(v & 0xFF);
+    chunk->code[(chunk->count)++] = (uint8_t)((v >> 8) & 0xFF);
 }
 
 void emit_u32(Chunk *chunk, uint32_t v){
-    if(chunk->cap - 4 < chunk->count){
-        size_t size = (chunk->cap + 4) * 2;
-        chunk_with(chunk, size);
-        
-        if(chunk->cap - 4 < chunk->count) return;
-    }
+    if(chunk_reserve(chunk, 4)) return;
 
+    chunk->code[(chunk->count)++] = (uint8_t)(v & 0xFF);
+    chunk->code[(chunk->count)++] = (uint8_t)((v >> 8) & 0xFF);
+    chunk->code[(chunk->count)++] = (uint8_t)((v >> 16) & 0xFF);
+    chunk->code[(chunk->count)++] = (uint8_t)((v >> 24) & 0xFF);
 }
