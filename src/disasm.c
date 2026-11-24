@@ -16,10 +16,10 @@ void print_err(const char *message, FILE *out){
 
 void print_op(size_t address, OpCode op_code, uint8_t *operand, FILE *out){
     size_t width = operand_width(op_code);
-    fprintf(out, "%04zu %s", address, OP_NAMES[op_code]);
-    if(!operand && !width){
+    fprintf(out, "%04zX %s", address, OP_NAMES[op_code]);
+    if(operand != NULL && width > 0){
         for (size_t i = 0; i < width; ++i) {
-            fprintf(out, " %x", operand[i]);
+            fprintf(out, " %02X", operand[i]);
         }
     }
     fprintf(out, "\n");
@@ -52,14 +52,15 @@ void disasm(uint8_t *code, size_t len, FILE *out){
             }
             case OP_HALT:{
                 print_op(i, OP_HALT, NULL, out);
-                break;
+                return;
             }
             default:{
                 char err_message[256] = { 0 };
-                snprintf(err_message, sizeof(err_message), \
-                        "Unknown byte code %x at %04zu",   \
+                snprintf(err_message, sizeof(err_message),  \
+                        "Unknown byte code %#02X at %02zX",    \
                         code[i], i);
-                break;
+                print_err(err_message, out);
+                return;
             }
         }
     }

@@ -7,11 +7,11 @@
 #include "isa.h"
 
 const char *OP_NAMES[256] = {
-    [OP_PUSH]  = "OP_PUSH",
-    [OP_ADD]   = "OP_ADD",
-    [OP_MUL]   = "OP_MUL",
-    [OP_PRINT] = "OP_PRINT",
-    [OP_HALT]  = "OP_HALT",
+    [OP_PUSH]  = "PUSH",
+    [OP_ADD]   = "ADD",
+    [OP_MUL]   = "MUL",
+    [OP_PRINT] = "PRINT",
+    [OP_HALT]  = "HALT",
 };
 
 uint32_t operand_width(OpCode op){
