@@ -25,15 +25,21 @@ void print_op(size_t address, OpCode op_code, uint8_t *operand, FILE *out){
     fprintf(out, "\n");
 }
 
+static inline int8_t is_width_enough(uint32_t width, size_t i, size_t len, FILE *out){
+    if(i + width >= len){
+        print_err("there is no enough byte for PUSH", out);
+        return 0;
+    }
+
+    return 1;
+}
+
 void disasm(uint8_t *code, size_t len, FILE *out){
     for (size_t i = 0; i < len; ++i) {
         switch (code[i]) {
             case OP_PUSH:{
                 uint32_t width = operand_width(OP_PUSH);
-                if(i + width >= len){
-                    print_err("there is no enough byte for PUSH", out);
-                    return;
-                }
+                if(!is_width_enough(width, i, len, out)) return;
                 print_op(i, OP_PUSH, code + i + 1, out);
                 i += width;
                 break;
@@ -44,6 +50,10 @@ void disasm(uint8_t *code, size_t len, FILE *out){
             }
             case OP_SWAP:{
                 print_op(i, OP_SWAP, NULL, out);
+                break;
+            }
+            case OP_POP:{
+                print_op(i, OP_POP, NULL, out);
                 break;
             }
             case OP_ADD:{
@@ -68,6 +78,51 @@ void disasm(uint8_t *code, size_t len, FILE *out){
             }
             case OP_NEG:{
                 print_op(i, OP_NEG, NULL, out);
+                break;
+            }
+            case OP_EQ:{
+                print_op(i, OP_EQ, NULL, out);
+                break;
+            }
+            case OP_LT:{
+                print_op(i, OP_LT, NULL, out);
+                break;
+            }
+            case OP_LE:{
+                print_op(i, OP_LE, NULL, out);
+                break;
+            }
+            case OP_GT:{
+                print_op(i, OP_GT, NULL, out);
+                break;
+            }
+            case OP_GE:{
+                print_op(i, OP_GE, NULL, out);
+                break;
+            }
+            case OP_NOT:{
+                print_op(i, OP_NOT, NULL, out);
+                break;
+            }
+            case OP_JMP:{
+                uint32_t width = operand_width(OP_JMP);
+                if(!is_width_enough(width, i, len, out)) return;
+                print_op(i, OP_JMP, code + i + 1, out);
+                i += width;
+                break;
+            }
+            case OP_JZ:{
+                uint32_t width = operand_width(OP_JZ);
+                if(!is_width_enough(width, i, len, out)) return;
+                print_op(i, OP_JZ, code + i + 1, out);
+                i += width;
+                break;
+            }
+            case OP_JNZ:{
+                uint32_t width = operand_width(OP_JNZ);
+                if(!is_width_enough(width, i, len, out)) return;
+                print_op(i, OP_JNZ, code + i + 1, out);
+                i += width;
                 break;
             }
             case OP_PRINT:{

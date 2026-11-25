@@ -43,7 +43,11 @@ static inline uint32_t load_u32(VM *vm){
     return result;
 }
 
-VM* vm_new(uint8_t *code, size_t code_size, FILE *out){
+void vm_dump(void){
+    // TODO!
+}
+
+VM* vm_new(uint8_t *code, size_t code_size, FILE *out, FILE *dump_out){
     if(code == NULL) return NULL;
 
     VM *vm = malloc(sizeof(*vm));
@@ -54,6 +58,7 @@ VM* vm_new(uint8_t *code, size_t code_size, FILE *out){
     vm->code_size = code_size;
     vm->out = out;
     vm->code = code;
+    vm->dump_out = dump_out;
     return vm;
 }
 
@@ -124,6 +129,65 @@ void vm_run(VM *vm){
                 ++(vm->ip);
                 int32_t a = pop(vm);
                 push(vm, -a);
+                break;
+            }
+            case OP_EQ:{
+                ++(vm->ip);
+                int32_t lv = pop(vm);
+                int32_t rv = pop(vm);
+                push(vm, lv == rv);
+                break;
+            }
+            case OP_LT:{
+                ++(vm->ip);
+                int32_t lv = pop(vm);
+                int32_t rv = pop(vm);
+                push(vm, lv < rv);
+                break;
+            }
+            case OP_LE:{
+                ++(vm->ip);
+                int32_t lv = pop(vm);
+                int32_t rv = pop(vm);
+                push(vm, lv <= rv);
+                break;
+            }
+            case OP_GT:{
+                ++(vm->ip);
+                int32_t lv = pop(vm);
+                int32_t rv = pop(vm);
+                push(vm, lv > rv);
+                break;
+            }
+            case OP_GE:{
+                ++(vm->ip);
+                int32_t lv = pop(vm);
+                int32_t rv = pop(vm);
+                push(vm, lv >= rv);
+                break;
+            }
+            case OP_NOT:{
+                ++(vm->ip);
+                int32_t v = pop(vm);
+                push(vm, !v);
+                break;
+            }
+            case OP_JMP:{
+                ++(vm->ip);
+                uint32_t addr = load_u32(vm);
+                vm->ip = addr;
+                break;
+            }
+            case OP_JZ:{
+                ++(vm->ip);
+                uint32_t addr = load_u32(vm);
+                if(pop(vm) == 0) vm->ip = addr;
+                break;
+            }
+            case OP_JNZ:{
+                ++(vm->ip);
+                uint32_t addr = load_u32(vm);
+                if(pop(vm) != 0) vm->ip = addr;
                 break;
             }
             case OP_PRINT:{

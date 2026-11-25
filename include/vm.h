@@ -23,9 +23,11 @@ typedef struct{
     int32_t stack[VM_STACK_SIZE];
     size_t sp;
     FILE *out;
+    FILE *dump_out;
 }VM;
 
-VM* vm_new(uint8_t *code, size_t code_size, FILE *out);
+VM* vm_new(uint8_t *code, size_t code_size, FILE *out, FILE *dump_out);
+void vm_dump(void);
 void vm_run(VM *vm);
 void vm_free(VM **vm);
 
